@@ -6,6 +6,7 @@ import Register from "./pages/Register"
 import DashboardLayout from "./components/layouts/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import ProtectRoute from "./components/layouts/ProtectRoute";
+import FieldStudy from "./pages/FieldStudy";
 
 
 function App() {
@@ -17,9 +18,17 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
 
+
+                    {/* dong 21 : cong viec la xac thuc nguoi dung da login hay chua */}
+
                     <Route element={<ProtectRoute />}>
+                    {/* Dashboardlayout layout cho tất cả các tuyến con */}
                         <Route element={<DashboardLayout />}>
                             <Route path="/" element={<Dashboard />} />
+                            <Route path="/field-study" element={<FieldStudy />} />
+                            <Route path="/123" element={<Dashboard />} />
+                            <Route path="/12" element={<Dashboard />} />
+                            <Route path="/123243" element={<Dashboard />} />
                         </Route>
                     </Route>
                 </Routes>

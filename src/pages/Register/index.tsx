@@ -59,7 +59,7 @@ const Register = () => {
                 formData,
             );
             if ((response.data as any).statusCode === 200) {
-                toast.success("Đăng ký thành công");
+                toast.success("Đăng ký thành công"); // response.message
                 setFormData({
                     fullName: "",
                     email: "",
