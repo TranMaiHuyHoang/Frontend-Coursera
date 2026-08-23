@@ -1,19 +1,23 @@
 import useFetch from '@/hooks/useFetch';
-import type { ISkill } from '@/models/skill';
-import { skillService } from '@/services/SkillService';
+import type { IFieldStudy } from '@/models/fieldStudy';
+import { fieldStudyService } from '@/services/FieldStudyService';
 import React, { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-const SkillDetail = () => {
-    const { skillId } = useParams();
+const FieldStudyDetail = () => {
+    const { fieldId } = useParams();
+
     const {
-        data: skill,
+        data: fieldStudy,
         isLoading,
         error,
         loadFetchFn,
-    } = useFetch<ISkill>({
+    } = useFetch<IFieldStudy>({
         fetchFn: async () => {
-            const res = await skillService.getDetailSkill({skillId: skillId});
+            const res = await fieldStudyService.getDetailFieldStudy({
+                fieldStudyId: fieldId,
+            });
+
             return res.data;
         },
     });
@@ -23,16 +27,33 @@ const SkillDetail = () => {
     }, []);
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="flex min-h-full items-center justify-center bg-slate-50">
+                <div className="text-sm text-slate-500">Loading...</div>
+            </div>
+        );
     }
 
     if (error) {
         console.error('Error:', error);
-        return <div>Error loading data</div>;
+
+        return (
+            <div className="flex min-h-full items-center justify-center bg-slate-50">
+                <div className="rounded-xl border border-red-200 bg-red-50 px-6 py-4 text-sm text-red-600">
+                    Error loading field study
+                </div>
+            </div>
+        );
     }
 
-    if (!skill) {
-        return <div>Skill not found</div>;
+    if (!fieldStudy) {
+        return (
+            <div className="flex min-h-full items-center justify-center bg-slate-50">
+                <div className="text-sm text-slate-500">
+                    Field study not found
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -43,13 +64,17 @@ const SkillDetail = () => {
                     {/* Breadcrumb */}
                     <div className="mb-5 flex items-center gap-2 text-sm text-slate-500">
                         <Link
-                            to={`/skill`}
+                            to={`/field-study`}
                             className="cursor-pointer hover:text-blue-600"
                         >
-                            Skills
+                            Lĩnh vực
                         </Link>
+
                         <span>/</span>
-                        <span className="text-slate-800">{skill.name}</span>
+
+                        <span className="text-slate-800">
+                            {fieldStudy.name}
+                        </span>
                     </div>
 
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -58,21 +83,23 @@ const SkillDetail = () => {
                             <div className="mb-3 flex items-center gap-3">
                                 <span
                                     className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                        skill.isActive
+                                        fieldStudy.isActive
                                             ? 'bg-green-100 text-green-700'
                                             : 'bg-red-100 text-red-700'
                                     }`}
                                 >
-                                    {skill.isActive ? 'Active' : 'Inactive'}
+                                    {fieldStudy.isActive
+                                        ? 'Đang hoạt động'
+                                        : 'Không hoạt động'}
                                 </span>
                             </div>
 
                             <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-                                {skill.name}
+                                {fieldStudy.name}
                             </h1>
 
                             <p className="mt-3 max-w-3xl text-base leading-7 text-slate-600">
-                                {skill.description}
+                                {fieldStudy.description}
                             </p>
                         </div>
 
@@ -104,28 +131,26 @@ const SkillDetail = () => {
                         {/* Description */}
                         <section className="rounded-2xl border bg-white p-6 shadow-sm">
                             <h2 className="text-xl font-bold text-slate-900">
-                                About this skill
+                                Giới thiệu lĩnh vực
                             </h2>
 
-                            <div className="mt-4">
-                                <p className="text-sm leading-7 text-slate-600">
-                                    {skill.description}
-                                </p>
-                            </div>
+                            <p className="mt-4 text-sm leading-7 text-slate-600">
+                                {fieldStudy.description}
+                            </p>
                         </section>
 
-                        {/* What you'll learn */}
+                        {/* Learning */}
                         <section className="rounded-2xl border bg-white p-6 shadow-sm">
                             <h2 className="text-xl font-bold text-slate-900">
-                                What you'll learn
+                                Bạn sẽ học được gì?
                             </h2>
 
                             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 {[
-                                    'Understand the fundamental concepts',
-                                    'Apply knowledge through practical exercises',
-                                    'Build real-world projects',
-                                    'Develop problem-solving skills',
+                                    'Nắm vững kiến thức nền tảng của lĩnh vực',
+                                    'Phát triển kỹ năng thực hành',
+                                    'Áp dụng kiến thức vào các dự án thực tế',
+                                    'Phát triển khả năng giải quyết vấn đề',
                                 ].map((item) => (
                                     <div
                                         key={item}
@@ -160,57 +185,50 @@ const SkillDetail = () => {
                     <aside>
                         <div className="sticky top-24 rounded-2xl border bg-white p-6 shadow-sm">
                             <h2 className="text-lg font-bold text-slate-900">
-                                Skill information
+                                Thông tin lĩnh vực
                             </h2>
 
                             <div className="mt-6 divide-y">
                                 {/* Status */}
                                 <div className="flex items-center justify-between py-4">
                                     <span className="text-sm text-slate-500">
-                                        Status
+                                        Trạng thái
                                     </span>
 
                                     <span
                                         className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                            skill.isActive
+                                            fieldStudy.isActive
                                                 ? 'bg-green-100 text-green-700'
                                                 : 'bg-red-100 text-red-700'
                                         }`}
                                     >
-                                        {skill.isActive ? 'Active' : 'Inactive'}
+                                        {fieldStudy.isActive
+                                            ? 'Đang hoạt động'
+                                            : 'Không hoạt động'}
                                     </span>
                                 </div>
 
                                 {/* Created */}
                                 <div className="flex flex-col gap-1 py-4">
                                     <span className="text-sm text-slate-500">
-                                        Created at
+                                        Ngày tạo
                                     </span>
 
                                     <span className="text-sm font-medium text-slate-900">
-                                        {skill.createdAt}
+                                        {fieldStudy.createdAt}
                                     </span>
                                 </div>
 
-                                {/* Updated */}
-                                <div className="flex flex-col gap-1 py-4">
-                                    <span className="text-sm text-slate-500">
-                                        Last updated
-                                    </span>
-
-                                    <span className="text-sm font-medium text-slate-900">
-                                        {skill.updatedAt}
-                                    </span>
-                                </div>
+                              
 
                                 {/* ID */}
                                 <div className="flex flex-col gap-1 py-4">
                                     <span className="text-sm text-slate-500">
-                                        Skill ID
+                                        Field ID
                                     </span>
 
                                     <span className="break-all font-mono text-xs text-slate-700">
-                                        {skill._id}
+                                        {fieldStudy._id}
                                     </span>
                                 </div>
                             </div>
@@ -220,14 +238,14 @@ const SkillDetail = () => {
                                 type="button"
                                 className="mt-4 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
                             >
-                                Start learning
+                                Xem khóa học
                             </button>
                         </div>
                     </aside>
                 </div>
             </main>
         </div>
-    );;
+    );
 };
 
-export default SkillDetail;
+export default FieldStudyDetail;

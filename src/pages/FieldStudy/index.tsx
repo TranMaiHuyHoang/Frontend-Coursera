@@ -50,7 +50,7 @@ export default function FieldStudy() {
             <main className="min-h-0 flex-1 overflow-y-auto p-5">
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {fieldStudies?.map((field) => (
-                        <FieldCard key={field.id} field={field} />
+                        <FieldCard key={field._id} field={field} />
                     ))}
                 </div>
 

@@ -8,5 +8,10 @@ class FieldStudyService {
         const response = await this.api.post('/field-studies/list', body);
         return response.data;
     };
+
+    getDetailFieldStudy = async (body: object): Promise<ApiResponse> => {
+        const response = await this.api.post('/field-studies/detail', body);
+        return response.data;
+    };
 }
 export const fieldStudyService = new FieldStudyService();

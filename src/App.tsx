@@ -9,6 +9,7 @@ import ProtectRoute from './components/layouts/ProtectRoute';
 import FieldStudy from './pages/FieldStudy';
 import Skill from './pages/Skill';
 import SkillDetail from './pages/SkillDetail';
+import FieldStudyDetail from './pages/FieldStudyDetail';
 
 function App() {
     return (
@@ -30,7 +31,7 @@ function App() {
                             />
                             <Route path="/skill" element={<Skill/>} />
                             <Route path="/skill/:skillId" element={<SkillDetail />} />
-                            <Route path="/123243" element={<Dashboard />} />
+                            <Route path="/field-study/:fieldId" element={<FieldStudyDetail />} />
                         </Route>
                     </Route>
                 </Routes>
