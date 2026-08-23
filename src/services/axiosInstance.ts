@@ -1,44 +1,43 @@
 import axios, { AxiosError } from 'axios';
-import { useAuth } from '@/contexts/authContext';
 
-// const API_BASE = 'http://localhost:3000/api';
-const API_BASE = 'https://nestjs-api-coursera.onrender.com/';
+const API_BASE = 'https://nestjs-api-coursera.onrender.com';
 
 const axiosInstance = axios.create({
     baseURL: API_BASE,
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true, // auth authorization
-    timeout: 30000, // thời gian chờ gọi API
+    withCredentials: true,
+    timeout: 30000,
 });
 
-// token chung toàn bộ config API
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = useAuth().token;
+        const storedAuth = localStorage.getItem('auth-storage');
 
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        if (storedAuth) {
+            const auth = JSON.parse(storedAuth);
+
+            if (auth.token) {
+                config.headers.Authorization = `Bearer ${auth.token}`;
+            }
         }
 
         return config;
     },
-    (error: AxiosError) => Promise.reject(error),
+    (error: AxiosError) => {
+        return Promise.reject(error);
+    },
 );
 
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
         if (error.response?.status === 401) {
-            const { isAuthenticated, logout } = useAuth();
+            localStorage.removeItem('auth-storage');
 
-            if (isAuthenticated) {
-                logout();
-
-                if (window.location.pathname !== '/signin') {
-                    window.location.href = '/signin';
-                }
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
             }
         }
 

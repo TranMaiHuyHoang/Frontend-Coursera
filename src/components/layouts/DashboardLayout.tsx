@@ -1,27 +1,18 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import {
-    BookOpen,
-    Home,
-    GraduationCap,
-    Heart,
-    Settings,
-    Search,
-    Bell,
-    User,
-} from 'lucide-react';
+import { BookOpen, Home, GraduationCap, Heart, Settings } from 'lucide-react';
 import Navbar from './Navbar';
 
 export default function DashboardLayout() {
     const menuItems = [
         { name: 'Dashboard', path: '/', icon: Home },
         { name: 'Lĩnh vực', path: '/field-study', icon: BookOpen },
-        { name: 'Wishlist', path: '/wishlist', icon: Heart },
+        { name: 'Kỹ năng', path: '/skill', icon: Heart },
         { name: 'Certificates', path: '/certificates', icon: GraduationCap },
         { name: 'Settings', path: '/settings', icon: Settings },
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="h-screen overflow-hidden bg-gray-50">
             {/* Navbar */}
             <Navbar />
 
@@ -57,9 +48,9 @@ export default function DashboardLayout() {
                 </div>
             </aside>
 
-            {/* Content */}
-            <main className="ml-64 pt-16">
-                <div>
+            {/* Content - chỉ khu vực này scroll */}
+            <main className="ml-64 h-screen pt-16">
+                <div className="h-full overflow-y-auto">
                     <Outlet />
                 </div>
             </main>

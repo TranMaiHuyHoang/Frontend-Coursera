@@ -4,19 +4,22 @@ import Header from '@/components/FieldStudy/Header';
 import FieldCard from '@/components/FieldCard';
 import useFetch from '@/hooks/useFetch';
 import { fieldStudyService } from '@/services/FieldStudyService';
+import type { ISkill } from '@/models/skill';
+import { skillService } from '@/services/SkillService';
+import SkillCard from '@/components/Skill/SkillCard';
 
-export default function FieldStudy() {
+export default function Skill() {
     const [search, setSearch] = useState('');
     const [sort, setSort] = useState('Ngày tạo mới nhất');
 
     const {
-        data: fieldStudies,
+        data: skills,
         isLoading,
         error,
         loadFetchFn,
-    } = useFetch<IFieldStudy[]>({
+    } = useFetch<ISkill[]>({
         fetchFn: async () => {
-            const res = await fieldStudyService.getListFieldStudies({});
+            const res = await skillService.getListSkills({});
             return res.data;
         },
     });
@@ -49,12 +52,12 @@ export default function FieldStudy() {
             {/* List - chỉ phần này cuộn */}
             <main className="min-h-0 flex-1 overflow-y-auto p-5">
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    {fieldStudies?.map((field) => (
-                        <FieldCard key={field.id} field={field} />
+                    {skills?.map((skill) => (
+                        <SkillCard key={skill._id} skill={skill} />
                     ))}
                 </div>
 
-                {fieldStudies?.length === 0 && (
+                {skills?.length === 0 && (
                     <div className="flex h-40 items-center justify-center text-gray-500">
                         Không tìm thấy lĩnh vực nào
                     </div>
