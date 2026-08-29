@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 type UseFetchProps<T> = {
     fetchFn: () => Promise<T>;
@@ -9,27 +9,12 @@ export default function useFetch<T>({ fetchFn }: UseFetchProps<T>) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<unknown>(null);
 
-    const fetchFnRef = useRef(fetchFn);
-    fetchFnRef.current = fetchFn;
-
-    // Lưu request đang chạy
-    const requestRef = useRef<Promise<T> | null>(null);
-
     const loadFetchFn = useCallback(async () => {
-        // Nếu đang có request thì dùng lại request đó
-        if (requestRef.current) {
-            return requestRef.current;
-        }
-
         setIsLoading(true);
         setError(null);
 
-        const request = fetchFnRef.current();
-
-        requestRef.current = request;
-
         try {
-            const response = await request;
+            const response = await fetchFn();
 
             setData(response);
 
@@ -40,10 +25,9 @@ export default function useFetch<T>({ fetchFn }: UseFetchProps<T>) {
 
             throw err;
         } finally {
-            requestRef.current = null;
             setIsLoading(false);
         }
-    }, []);
+    }, [fetchFn]);
 
     const reset = useCallback(() => {
         setData(null);
@@ -53,6 +37,7 @@ export default function useFetch<T>({ fetchFn }: UseFetchProps<T>) {
 
     return {
         data,
+        setData,
         isLoading,
         error,
         loadFetchFn,

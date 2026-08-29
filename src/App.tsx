@@ -10,6 +10,12 @@ import FieldStudy from './pages/FieldStudy';
 import Skill from './pages/Skill';
 import SkillDetail from './pages/SkillDetail';
 import FieldStudyDetail from './pages/FieldStudyDetail';
+import Language from './pages/Language';
+import LanguageDetail from './pages/LanguageDetail';
+import CreatedFieldStudy from './pages/CreateFieldStudy';
+import UpdateFieldStudy from './pages/UpdateFieldStudy';
+import CreateSkill from './pages/CreateSkill';
+import UpdateSkill from './pages/UpdateSkill';
 
 function App() {
     return (
@@ -29,13 +35,61 @@ function App() {
                                 path="/field-study"
                                 element={<FieldStudy />}
                             />
-                            <Route path="/skill" element={<Skill/>} />
-                            <Route path="/skill/:skillId" element={<SkillDetail />} />
-                            <Route path="/field-study/:fieldId" element={<FieldStudyDetail />} />
+
+                            <Route
+                                path="/field-study/:fieldId"
+                                element={<FieldStudyDetail />}
+                            />
+
+                            <Route
+                                path="/created-fieldStudy"
+                                element={<CreatedFieldStudy />}
+                            />
+
+                            <Route
+                                path="/update-fieldStudy/:fieldId"
+                                element={<UpdateFieldStudy />}
+                            />
+
+                            <Route
+                                path="/create-skill"
+                                element={<CreateSkill />}
+                            />
+
+                            <Route
+                                path="/update-skill/:skillId"
+                                element={<UpdateSkill />}
+                            />
+
+                            <Route path="/skill" element={<Skill />} />
+                            
+                            <Route
+                                path="/skill/:skillId"
+                                element={<SkillDetail />}
+                            />
+
+                            <Route path="/language" element={<Language />} />
+
+                            <Route
+                                path="/language/:languageId"
+                                element={<LanguageDetail />}
+                            />
                         </Route>
                     </Route>
                 </Routes>
             </BrowserRouter>
+            <ToastContainer
+                position="bottom-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
         </>
     );
 }
