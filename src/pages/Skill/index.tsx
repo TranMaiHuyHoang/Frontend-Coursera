@@ -5,10 +5,12 @@ import { skillService } from '@/services/SkillService';
 import SkillCard from '@/components/Skill/SkillCard';
 import SkillHeader from '@/components/SkillHeader';
 import { toast } from 'react-toastify';
+import { FILTER_OPTIONS } from '@/constants/sort';
+
 
 export default function Skill() {
     const [search, setSearch] = useState('');
-    const [sort, setSort] = useState('Ngày tạo mới nhất');
+    const [filter, setFilter] = useState(FILTER_OPTIONS[0].value);
 
     // console.log('search', search);
 
@@ -22,6 +24,7 @@ export default function Skill() {
         fetchFn: async () => {
             const res = await skillService.getListSkills({
                 keyword: search,
+                filter:filter,
             });
             return res.data;
         },
@@ -29,9 +32,9 @@ export default function Skill() {
 
     useEffect(() => {
         loadFetchFn();
-    }, [search]);
+    }, [search,filter]);
 
-    const handleDeleteSkill = async (skillId) => {
+    const handleDeleteSkill = async (skillId: string) => {
         try {
             const res = await skillService.deleteSkill({
                 skillId: skillId,
@@ -63,8 +66,8 @@ export default function Skill() {
                 <SkillHeader
                     search={search}
                     setSearch={setSearch}
-                    sort={sort}
-                    setSort={setSort}
+                    filter={filter}
+                    setFilter={setFilter}
                 />
             </div>
 

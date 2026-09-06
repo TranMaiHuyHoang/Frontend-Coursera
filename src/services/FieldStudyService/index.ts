@@ -22,5 +22,10 @@ class FieldStudyService {
         const response = await this.api.post('/field-studies/update', body);
         return response.data;
     };
+
+    deleteFieldStudy = async (body: object): Promise<ApiResponse> => {
+        const response = await this.api.post('/field-studies/delete', body);
+        return response.data;
+    };
 }
 export const fieldStudyService = new FieldStudyService();

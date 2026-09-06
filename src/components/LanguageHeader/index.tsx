@@ -1,4 +1,4 @@
-import { ChevronDown, Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SearchInput from '../common/SearchInput';
@@ -11,7 +11,7 @@ interface Props {
     setFilter: (value: string) => void;
 }
 
-export default function SkillHeader({
+export default function LanguageHeader({
     search,
     setSearch,
     filter,
@@ -24,16 +24,16 @@ export default function SkillHeader({
             <div className="px-6 py-6">
                 <div className="flex items-center justify-between">
                     <h1 className="text-[20px] font-bold text-gray-800">
-                        Danh sách Kỹ năng
+                        Danh sách Ngôn ngữ
                     </h1>
 
                     <button
-                        onClick={() => navigate('/create-skill')}
+                        onClick={() => navigate('/create-language')}
                         type="button"
                         className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
                     >
                         <Plus size={20} />
-                        Thêm kỹ năng
+                        Thêm ngôn ngữ
                     </button>
                 </div>
 
@@ -42,7 +42,7 @@ export default function SkillHeader({
                     <select
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
-                        className='rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ringT-blue-500 focus:border-blue-500'
+                        className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ringT-blue-500 focus:border-blue-500"
                     >
                         {FILTER_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>

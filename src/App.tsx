@@ -16,6 +16,8 @@ import CreatedFieldStudy from './pages/CreateFieldStudy';
 import UpdateFieldStudy from './pages/UpdateFieldStudy';
 import CreateSkill from './pages/CreateSkill';
 import UpdateSkill from './pages/UpdateSkill';
+import CreateLanguage from './pages/CreateLanguage';
+import UpdateLanguage from './pages/UpdateLanguage';
 
 function App() {
     return (
@@ -62,7 +64,7 @@ function App() {
                             />
 
                             <Route path="/skill" element={<Skill />} />
-                            
+
                             <Route
                                 path="/skill/:skillId"
                                 element={<SkillDetail />}
@@ -74,6 +76,9 @@ function App() {
                                 path="/language/:languageId"
                                 element={<LanguageDetail />}
                             />
+
+                            <Route path='/create-language' element={<CreateLanguage/>}/>
+                            <Route path='/update-language/:languageId' element={<UpdateLanguage/>}/>
                         </Route>
                     </Route>
                 </Routes>
