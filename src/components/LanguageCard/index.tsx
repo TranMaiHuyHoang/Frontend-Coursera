@@ -1,23 +1,29 @@
 import type { ILanguage } from '@/models/language';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, CirclePlus } from 'lucide-react';
 import { Uml } from '@thesvg/react';
 import moment from 'moment';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import ConfirmDeleteModal from '../common/ConfirmDeleteModal';
+import CreateLanguageModal from '../CreateLanguageModal';
 
 interface LanguageCardProps {
     language: ILanguage;
     onDelete: (languageId: string) => Promise<void>;
+    onCreated: (newLanguage: ILanguage) => void;
 }
+
+
 
 export default function LanguageCard({
     language,
     onDelete,
+    onCreated,
 }: LanguageCardProps) {
     const navigate = useNavigate();
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const handleConfirmDelete = async () => {
         await onDelete(language._id);
@@ -49,29 +55,43 @@ export default function LanguageCard({
                         {moment(language.createdAt).format('DD/MM/YYYY')}
                     </span>
 
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault(); // Ngăn chặn hành vi mặc định
-                            e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
-                            navigate(`/update-language/${language._id}`);
-                        }}
-                        type="button"
-                        className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
-                    >
-                        <Edit2 size={21} />
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault(); // Ngăn chặn hành vi mặc định
+                                e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
+                                navigate(`/update-language/${language._id}`);
+                            }}
+                            type="button"
+                            className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+                        >
+                            <Edit2 size={21} />
+                        </button>
 
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault(); // Ngăn chặn hành vi mặc định
-                            e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
-                            setIsDeleteModalOpen(true);
-                        }}
-                        type="button"
-                        className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
-                    >
-                        <Trash2 size={21} />
-                    </button>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault(); // Ngăn chặn hành vi mặc định
+                                e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
+                                setIsDeleteModalOpen(true);
+                            }}
+                            type="button"
+                            className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+                        >
+                            <Trash2 size={21} />
+                        </button>
+
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault(); // Ngăn chặn hành vi mặc định
+                                e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
+                                setIsCreateModalOpen(true);
+                            }}
+                            type="button"
+                            className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+                        >
+                            <CirclePlus size={21} />
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -81,6 +101,12 @@ export default function LanguageCard({
                 description="Bạn có chắc chắn muốn xoá ngôn ngữ này? Hành động này không thể hoàn tác."
                 onCancel={() => setIsDeleteModalOpen(false)}
                 onConfirm={handleConfirmDelete}
+            />
+
+            <CreateLanguageModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreated={onCreated}
             />
         </>
     );

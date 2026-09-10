@@ -45,29 +45,32 @@ export default function SkillCard({ skill, onDelete }: SkillCardProps) {
                         Ngày tạo: {moment(skill.createdAt).format('DD/MM/YYYY')}
                     </span>
 
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault(); // Ngăn chặn hành vi mặc định
-                            e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
-                            navigate(`/update-skill/${skill._id}`);
-                        }}
-                        type="button"
-                        className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
-                    >
-                        <Edit2 size={21} />
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault(); // Ngăn chặn hành vi mặc định
+                                e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
+                                navigate(`/update-skill/${skill._id}`);
+                            }}
+                            type="button"
+                            className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+                        >
+                            <Edit2 size={21} />
+                        </button>
 
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault(); // Ngăn chặn hành vi mặc định
-                            e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
-                            setIsDeleteModalOpen(true);
-                        }}
-                        type="button"
-                        className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
-                    >
-                        <Trash2 size={21} />
-                    </button>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault(); // Ngăn chặn hành vi mặc định
+                                e.stopPropagation(); // Ngăn chặn nhầm lẫn click với thẻ cha
+                                setIsDeleteModalOpen(true);
+                            }}
+                            type="button"
+                            className="flex items-center justify-center rounded-md p-1.5 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800"
+                        >
+                            <Trash2 size={21} />
+                        </button>
+
+                    </div>
                 </div>
             </div>
 

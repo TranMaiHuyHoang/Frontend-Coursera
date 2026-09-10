@@ -6,29 +6,30 @@ import LanguageCard from '@/components/LanguageCard';
 import LanguageHeader from '@/components/LanguageHeader';
 import { toast } from 'react-toastify';
 import { FILTER_OPTIONS } from '@/constants/sort';
+import usePaginationList from '@/hooks/usePaginationList';
+import useScrollToEnd from '@/hooks/useScrollToEnd';
 
 export default function Language() {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState(FILTER_OPTIONS[0].value);
 
     const {
-        data: languages,
-        setData: setLanguages,
-        isLoading,
-        error,
-        loadFetchFn,
-    } = useFetch<ILanguage[]>({
-        fetchFn: async () => {
-            const res = await languageService.getListLanguage({
-                keyword: search,
-                filter: filter,
-            });
+        list: languages,
+        setList: setLanguages,
+        // isSkeletonLoading, return toán tử 3 ngôi
+        loadFirstPage,
+        loadMore,
+    } = usePaginationList<ILanguage>({
+        fetchFn: async (payload) => {
+            const res = await languageService.getListLanguage(payload);
             return res.data;
         },
+        limit: 15,
+        params: { keyword: search, filter: filter },
     });
 
     useEffect(() => {
-        loadFetchFn();
+        loadFirstPage();
     }, [search, filter]);
 
     const handleDeleteLanguage = async (languageId: string) => {
@@ -49,14 +50,11 @@ export default function Language() {
         }
     };
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+    const handleCreate = (newlanguage: ILanguage) => {
+        setLanguages((prevLanguages) => [newlanguage, ...prevLanguages]);
+    };
 
-    if (error) {
-        console.error('Error:', error);
-        return <div>Error loading data</div>;
-    }
+    const containerRef = useScrollToEnd(loadMore, { threshold: 0.95 });
 
     return (
         <div className="flex h-full flex-col bg-[#f8f9fa]">
@@ -71,13 +69,17 @@ export default function Language() {
             </div>
 
             {/* List - chỉ phần này cuộn */}
-            <main className="min-h-0 flex-1 overflow-y-auto p-5">
+            <main
+                className="min-h-0 flex-1 overflow-y-auto p-5"
+                ref={containerRef}
+            >
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {languages?.map((language) => (
                         <LanguageCard
                             key={language._id}
                             language={language}
                             onDelete={handleDeleteLanguage}
+                            onCreated={(language) => handleCreate(language)}
                         />
                     ))}
                 </div>

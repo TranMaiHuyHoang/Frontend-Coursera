@@ -50,6 +50,10 @@ export default function Skill() {
         }
     };
 
+    const handleCreateSkill = (newSkill: ISkill) => {
+        setSkills((prevSkills) => [newSkill, ...prevSkills]);
+    };
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -68,6 +72,7 @@ export default function Skill() {
                     setSearch={setSearch}
                     filter={filter}
                     setFilter={setFilter}
+                    onCreated={handleCreateSkill}
                 />
             </div>
 

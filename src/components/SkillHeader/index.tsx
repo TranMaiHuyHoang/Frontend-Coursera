@@ -1,14 +1,16 @@
-import { ChevronDown, Plus, Search } from 'lucide-react';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
 import SearchInput from '../common/SearchInput';
 import { FILTER_OPTIONS } from '@/constants/sort';
+import CreateSkillModal from '../CreateSkillModal';
+import type { ISkill } from '@/models/skill';
 
 interface Props {
     search: string;
     setSearch: (value: string) => void;
     filter: string;
     setFilter: (value: string) => void;
+    onCreated: (newSkill: ISkill) => void;
 }
 
 export default function SkillHeader({
@@ -16,8 +18,9 @@ export default function SkillHeader({
     setSearch,
     filter,
     setFilter,
+    onCreated,
 }: Props) {
-    const navigate = useNavigate();
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     return (
         <div className="border-b border-gray-200 bg-white">
@@ -28,7 +31,7 @@ export default function SkillHeader({
                     </h1>
 
                     <button
-                        onClick={() => navigate('/create-skill')}
+                        onClick={() => setIsCreateModalOpen(true)}
                         type="button"
                         className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
                     >
@@ -52,6 +55,12 @@ export default function SkillHeader({
                     </select>
                 </div>
             </div>
+
+            <CreateSkillModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreated={onCreated}
+            />
         </div>
     );
 }
