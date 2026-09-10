@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import useFetch from '@/hooks/useFetch';
+import usePaginationList from '@/hooks/usePaginationList';
+import useScrollToEnd from '@/hooks/useScrollToEnd';
 import type { ISkill } from '@/models/skill';
 import { skillService } from '@/services/SkillService';
 import SkillCard from '@/components/Skill/SkillCard';
@@ -15,24 +16,22 @@ export default function Skill() {
     // console.log('search', search);
 
     const {
-        data: skills,
-        setData: setSkills,
-        isLoading,
-        error,
-        loadFetchFn,
-    } = useFetch<ISkill[]>({
-        fetchFn: async () => {
-            const res = await skillService.getListSkills({
-                keyword: search,
-                filter:filter,
-            });
+        list: skills,
+        setList: setSkills,
+        loadFirstPage,
+        loadMore,
+    } = usePaginationList<ISkill>({
+        fetchFn: async (payload) => {
+            const res = await skillService.getListSkills(payload);
             return res.data;
         },
+        limit: 15,
+        params: { keyword: search, filter },
     });
 
     useEffect(() => {
-        loadFetchFn();
-    }, [search,filter]);
+        loadFirstPage();
+    }, [search, filter]);
 
     const handleDeleteSkill = async (skillId: string) => {
         try {
@@ -54,14 +53,7 @@ export default function Skill() {
         setSkills((prevSkills) => [newSkill, ...prevSkills]);
     };
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        console.error('Error:', error);
-        return <div>Error loading data</div>;
-    }
+    const containerRef = useScrollToEnd(loadMore, { threshold: 0.95 });
 
     return (
         <div className="flex h-full flex-col bg-[#f8f9fa]">
@@ -77,7 +69,10 @@ export default function Skill() {
             </div>
 
             {/* List - chỉ phần này cuộn */}
-            <main className="min-h-0 flex-1 overflow-y-auto p-5">
+            <main
+                className="min-h-0 flex-1 overflow-y-auto p-5"
+                ref={containerRef}
+            >
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {skills?.map((skill) => (
                         <SkillCard
@@ -90,7 +85,7 @@ export default function Skill() {
 
                 {skills?.length === 0 && (
                     <div className="flex h-40 items-center justify-center text-gray-500">
-                        Không tìm thấy lĩnh vực nào
+                        Không tìm thấy kỹ năng nào
                     </div>
                 )}
             </main>
