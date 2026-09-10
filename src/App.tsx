@@ -18,6 +18,7 @@ import CreateSkill from './pages/CreateSkill';
 import UpdateSkill from './pages/UpdateSkill';
 import CreateLanguage from './pages/CreateLanguage';
 import UpdateLanguage from './pages/UpdateLanguage';
+import Video from './pages/Video';
 
 function App() {
     return (
@@ -79,6 +80,8 @@ function App() {
 
                             <Route path='/create-language' element={<CreateLanguage/>}/>
                             <Route path='/update-language/:languageId' element={<UpdateLanguage/>}/>
+
+                            <Route path="/video" element={<Video />} />
                         </Route>
                     </Route>
                 </Routes>
