@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { BookOpen, Home, GraduationCap, Heart, Settings } from 'lucide-react';
+import { BookOpen, Home, GraduationCap, Heart, Settings, Video } from 'lucide-react';
 import Navbar from './Navbar';
 
 export default function DashboardLayout() {
@@ -8,6 +8,7 @@ export default function DashboardLayout() {
         { name: 'Lĩnh vực', path: '/field-study', icon: BookOpen },
         { name: 'Kỹ năng', path: '/skill', icon: Heart },
         { name: 'Ngôn ngữ', path: '/language', icon: GraduationCap },
+        { name: 'Quản lý video', path: '/video', icon: Video },
         { name: 'Settings', path: '/settings', icon: Settings },
     ];
 
