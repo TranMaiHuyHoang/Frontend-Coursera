@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { videoGroupService } from '@/services/VideoGroupService';
 import type { IVideoGroup } from '@/models/videoGroup';
@@ -6,18 +6,40 @@ import type { IVideoGroup } from '@/models/videoGroup';
 interface CreateVideoGroupModalProps {
     isOpen: boolean;
     onClose: () => void;
+    mode?: 'create' | 'update';
+    videoGroup?: IVideoGroup | null;
     onCreated?: (newVideoGroup: IVideoGroup) => void;
+    onUpdated?: (updatedVideoGroup: IVideoGroup) => void;
 }
 
 export default function CreateVideoGroupModal({
     isOpen,
     onClose,
+    mode = 'create',
+    videoGroup = null,
     onCreated,
+    onUpdated,
 }: CreateVideoGroupModalProps) {
     const [videoGroupName, setVideoGroupName] = useState('');
     const [description, setDescription] = useState('');
     const [isActive, setIsActive] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+
+    const isUpdateMode = mode === 'update';
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        if (isUpdateMode && videoGroup) {
+            setVideoGroupName(videoGroup.video_group_name ?? '');
+            setDescription('');
+            setIsActive(videoGroup.is_active ?? true);
+        } else {
+            setVideoGroupName('');
+            setDescription('');
+            setIsActive(true);
+        }
+    }, [isOpen, isUpdateMode, videoGroup]);
 
     if (!isOpen) return null;
 
@@ -40,20 +62,38 @@ export default function CreateVideoGroupModal({
         try {
             setIsLoading(true);
 
-            const res = await videoGroupService.createVideoGroup({
-                video_group_name: videoGroupName.trim(),
-                description: description.trim(),
-                is_active: isActive,
-            });
+            if (isUpdateMode) {
+                const res = await videoGroupService.updateVideoGroup({
+                    video_group_id: videoGroup?._id,
+                    video_group_name: videoGroupName.trim(),
+                    is_active: isActive,
+                });
 
-            toast.success('Thêm nhóm video thành công!');
+                toast.success('Cập nhật nhóm video thành công!');
 
-            resetForm();
-            onClose();
-            onCreated?.(res.data);
+                resetForm();
+                onClose();
+                onUpdated?.(res.data);
+            } else {
+                const res = await videoGroupService.createVideoGroup({
+                    video_group_name: videoGroupName.trim(),
+                    description: description.trim(),
+                    is_active: isActive,
+                });
+
+                toast.success('Thêm nhóm video thành công!');
+
+                resetForm();
+                onClose();
+                onCreated?.(res.data);
+            }
         } catch (error) {
             console.error(error);
-            toast.error('Có lỗi xảy ra khi thêm nhóm video!');
+            toast.error(
+                isUpdateMode
+                    ? 'Có lỗi xảy ra khi cập nhật nhóm video!'
+                    : 'Có lỗi xảy ra khi thêm nhóm video!',
+            );
         } finally {
             setIsLoading(false);
         }
@@ -65,7 +105,7 @@ export default function CreateVideoGroupModal({
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
                     <h2 className="text-lg font-bold text-gray-800">
-                        Thêm Nhóm Video
+                        {isUpdateMode ? 'Cập Nhật Nhóm Video' : 'Thêm Nhóm Video'}
                     </h2>
 
                     <button
@@ -96,20 +136,22 @@ export default function CreateVideoGroupModal({
                         />
                     </div>
 
-                    <div className="mb-5">
-                        <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Mô tả
-                        </label>
+                    {!isUpdateMode && (
+                        <div className="mb-5">
+                            <label className="mb-1 block text-sm font-medium text-gray-700">
+                                Mô tả
+                            </label>
 
-                        <textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="w-full rounded-xl border border-gray-300 p-4 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50"
-                            placeholder="Mô tả chi tiết nhóm video..."
-                            rows={4}
-                            disabled={isLoading}
-                        />
-                    </div>
+                            <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                className="w-full rounded-xl border border-gray-300 p-4 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50"
+                                placeholder="Mô tả chi tiết nhóm video..."
+                                rows={4}
+                                disabled={isLoading}
+                            />
+                        </div>
+                    )}
 
                     <div className="mb-8 flex items-center gap-2">
                         <input
@@ -145,7 +187,13 @@ export default function CreateVideoGroupModal({
                             disabled={isLoading}
                             className="rounded-xl bg-cyan-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-cyan-600 disabled:opacity-50"
                         >
-                            {isLoading ? 'Đang tạo...' : 'Tạo nhóm'}
+                            {isUpdateMode
+                                ? isLoading
+                                    ? 'Đang cập nhật...'
+                                    : 'Cập Nhật'
+                                : isLoading
+                                  ? 'Đang tạo...'
+                                  : 'Tạo nhóm'}
                         </button>
                     </div>
                 </form>

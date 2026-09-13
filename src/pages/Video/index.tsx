@@ -18,7 +18,8 @@ const VIDEO_FILTER_OPTIONS = [
 export default function Video() {
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState(VIDEO_FILTER_OPTIONS[0].value);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingGroup, setEditingGroup] = useState<IVideoGroup | null>(null);
 
     const {
         list: videoGroups,
@@ -38,8 +39,33 @@ export default function Video() {
         loadFirstPage();
     }, [search, filter]);
 
+    const openCreateModal = () => {
+        setEditingGroup(null);
+        setIsModalOpen(true);
+    };
+
+    const openUpdateModal = (group: IVideoGroup) => {
+        setEditingGroup(group);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setEditingGroup(null);
+    };
+
     const handleCreateVideoGroup = (newGroup: IVideoGroup) => {
         setVideoGroups((prevGroups) => [newGroup, ...prevGroups]);
+    };
+
+    const handleUpdateVideoGroup = (updatedGroup: IVideoGroup) => {
+        setVideoGroups((prevGroups) =>
+            prevGroups.map((group) =>
+                group._id === updatedGroup._id
+                    ? { ...group, ...updatedGroup }
+                    : group,
+            ),
+        );
     };
 
     const containerRef = useScrollToEnd(loadMore, { threshold: 0.95 });
@@ -55,7 +81,7 @@ export default function Video() {
                         </h1>
 
                         <button
-                            onClick={() => setIsCreateModalOpen(true)}
+                            onClick={openCreateModal}
                             type="button"
                             className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
                         >
@@ -88,7 +114,11 @@ export default function Video() {
             >
                 <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {videoGroups.map((group) => (
-                        <VideoGroupCard key={group._id} group={group} />
+                        <VideoGroupCard
+                            key={group._id}
+                            group={group}
+                            onUpdate={openUpdateModal}
+                        />
                     ))}
                 </div>
 
@@ -100,9 +130,12 @@ export default function Video() {
             </main>
 
             <CreateVideoGroupModal
-                isOpen={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
+                mode={editingGroup ? 'update' : 'create'}
+                isOpen={isModalOpen}
+                videoGroup={editingGroup}
+                onClose={closeModal}
                 onCreated={handleCreateVideoGroup}
+                onUpdated={handleUpdateVideoGroup}
             />
         </div>
     );

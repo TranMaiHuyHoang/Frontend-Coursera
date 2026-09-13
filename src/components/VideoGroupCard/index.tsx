@@ -1,12 +1,16 @@
-import { PlayCircle } from 'lucide-react';
+import { Edit2, PlayCircle } from 'lucide-react';
 import moment from 'moment';
 import type { IVideoGroup } from '@/models/videoGroup';
 
 interface VideoGroupCardProps {
     group: IVideoGroup;
+    onUpdate: (group: IVideoGroup) => void;
 }
 
-export default function VideoGroupCard({ group }: VideoGroupCardProps) {
+export default function VideoGroupCard({
+    group,
+    onUpdate,
+}: VideoGroupCardProps) {
     return (
         <div className="overflow-hidden rounded-xl border bg-white shadow-sm transition hover:shadow-md">
             {/* Thumbnail */}
@@ -37,6 +41,17 @@ export default function VideoGroupCard({ group }: VideoGroupCardProps) {
                 <p className="mt-1 text-sm text-gray-500">
                     Ngày tạo: {moment(group.createdAt).format('DD/MM/YYYY')}
                 </p>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-end border-t border-gray-200 px-5 py-3">
+                <button
+                    type="button"
+                    onClick={() => onUpdate(group)}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-blue-600 transition hover:bg-blue-50"
+                >
+                    <Edit2 size={18} />
+                </button>
             </div>
         </div>
     );
