@@ -7,6 +7,7 @@ import { Plus } from 'lucide-react';
 import SearchInput from '@/components/common/SearchInput';
 import VideoGroupCard from '@/components/VideoGroupCard';
 import CreateVideoGroupModal from '@/components/CreateVideoGroupModal';
+import { toast } from 'react-toastify';
 
 const VIDEO_FILTER_OPTIONS = [
     { label: 'Mới nhất', value: 'newest' },
@@ -68,6 +69,25 @@ export default function Video() {
         );
     };
 
+    const handleDeleteVideoGroup = async (videoGroupId: string) => {
+        try {
+            const res = await videoGroupService.deleteVideoGroup({
+                video_group_id: videoGroupId,
+            });
+            if (res.statusCode === 200) {
+                setVideoGroups((prevGroups) =>
+                    prevGroups.filter(
+                        (group) => group._id !== videoGroupId,
+                    ),
+                );
+                toast.success('Xoá nhóm video thành công!');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Xoá nhóm video thất bại!');
+        }
+    };
+
     const containerRef = useScrollToEnd(loadMore, { threshold: 0.95 });
 
     return (
@@ -118,6 +138,7 @@ export default function Video() {
                             key={group._id}
                             group={group}
                             onUpdate={openUpdateModal}
+                            onDelete={handleDeleteVideoGroup}
                         />
                     ))}
                 </div>
