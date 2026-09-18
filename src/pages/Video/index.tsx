@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 import usePaginationList from '@/hooks/usePaginationList';
 import useScrollToEnd from '@/hooks/useScrollToEnd';
-import type { IVideoGroup } from '@/models/videoGroup';
-import { videoGroupService } from '@/services/VideoGroupService';
-import { Plus } from 'lucide-react';
+import type { IVideo } from '@/models/videoGroup';
+import { videoService } from '@/services/VideoService';
 import SearchInput from '@/components/common/SearchInput';
-import VideoGroupCard from '@/components/VideoGroupCard';
-import CreateVideoGroupModal from '@/components/CreateVideoGroupModal';
-import { toast } from 'react-toastify';
+import VideoCard from '@/components/VideoCard';
+import CreateVideoModal from '@/components/CreateVideoModal';
 
 const VIDEO_FILTER_OPTIONS = [
     { label: 'Mới nhất', value: 'newest' },
@@ -16,20 +16,31 @@ const VIDEO_FILTER_OPTIONS = [
     { label: 'Không hoạt động', value: 'not_active' },
 ];
 
+type VideoLocationState = {
+    video_group_name?: string;
+};
+
 export default function Video() {
+    const { videoGroupId } = useParams();
+    const location = useLocation();
+    const locationState = (location.state as VideoLocationState | null) ?? null;
+    const videoGroupName = locationState?.video_group_name;
+
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState(VIDEO_FILTER_OPTIONS[0].value);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingGroup, setEditingGroup] = useState<IVideoGroup | null>(null);
 
     const {
-        list: videoGroups,
-        setList: setVideoGroups,
+        list: videos,
+        setList: setVideos,
         loadFirstPage,
         loadMore,
-    } = usePaginationList<IVideoGroup>({
+    } = usePaginationList<IVideo>({
         fetchFn: async (payload) => {
-            const res = await videoGroupService.getListVideoGroups(payload);
+            const res = await videoService.getListVideos({
+                ...payload,
+                video_group_id: videoGroupId,
+            });
             return res.data;
         },
         limit: 10,
@@ -37,81 +48,54 @@ export default function Video() {
     });
 
     useEffect(() => {
+        if (!videoGroupId) return;
         loadFirstPage();
-    }, [search, filter]);
+    }, [search, filter, videoGroupId]);
 
-    const openCreateModal = () => {
-        setEditingGroup(null);
-        setIsModalOpen(true);
-    };
-
-    const openUpdateModal = (group: IVideoGroup) => {
-        setEditingGroup(group);
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setEditingGroup(null);
-    };
-
-    const handleCreateVideoGroup = (newGroup: IVideoGroup) => {
-        setVideoGroups((prevGroups) => [newGroup, ...prevGroups]);
-    };
-
-    const handleUpdateVideoGroup = (updatedGroup: IVideoGroup) => {
-        setVideoGroups((prevGroups) =>
-            prevGroups.map((group) =>
-                group._id === updatedGroup._id
-                    ? { ...group, ...updatedGroup }
-                    : group,
-            ),
-        );
-    };
-
-    const handleDeleteVideoGroup = async (videoGroupId: string) => {
-        try {
-            const res = await videoGroupService.deleteVideoGroup({
-                video_group_id: videoGroupId,
-            });
-            if (res.statusCode === 200) {
-                setVideoGroups((prevGroups) =>
-                    prevGroups.filter(
-                        (group) => group._id !== videoGroupId,
-                    ),
-                );
-                toast.success('Xoá nhóm video thành công!');
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error('Xoá nhóm video thất bại!');
-        }
+    const handleCreateVideo = (newVideo: IVideo) => {
+        setVideos((prevVideos) => [newVideo, ...prevVideos]);
     };
 
     const containerRef = useScrollToEnd(loadMore, { threshold: 0.95 });
 
     return (
         <div className="flex h-full flex-col bg-[#f8f9fa]">
-            {/* Header - không cuộn */}
             <div className="shrink-0 border-b border-gray-200 bg-white">
                 <div className="px-6 py-6">
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-[20px] font-bold text-gray-800">
+                    <div className="mb-3 flex items-center gap-2 text-sm text-gray-500">
+                        <Link
+                            to="/video-group"
+                            className="cursor-pointer hover:text-blue-600"
+                        >
                             Quản lý video
+                        </Link>
+                        <span>/</span>
+                        <span className="text-gray-800">
+                            {videoGroupName || 'Danh sách video'}
+                        </span>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-4">
+                        <h1 className="text-[20px] font-bold text-gray-800">
+                            {videoGroupName || 'Danh sách video'}
                         </h1>
 
                         <button
-                            onClick={openCreateModal}
+                            onClick={() => setIsModalOpen(true)}
                             type="button"
-                            className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+                            disabled={!videoGroupId}
+                            className="flex shrink-0 items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-50"
                         >
                             <Plus size={20} />
-                            Thêm Nhóm Video
+                            Thêm Video
                         </button>
                     </div>
 
                     <div className="mt-5 flex justify-end gap-2">
-                        <SearchInput defaultValue={search} onSearch={setSearch} />
+                        <SearchInput
+                            defaultValue={search}
+                            onSearch={setSearch}
+                        />
                         <select
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
@@ -127,37 +111,31 @@ export default function Video() {
                 </div>
             </div>
 
-            {/* List - chỉ phần này cuộn */}
             <main
                 className="min-h-0 flex-1 overflow-y-auto p-5"
                 ref={containerRef}
             >
                 <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    {videoGroups.map((group) => (
-                        <VideoGroupCard
-                            key={group._id}
-                            group={group}
-                            onUpdate={openUpdateModal}
-                            onDelete={handleDeleteVideoGroup}
-                        />
+                    {videos.map((video) => (
+                        <VideoCard key={video._id} video={video} />
                     ))}
                 </div>
 
-                {videoGroups.length === 0 && (
+                {videos.length === 0 && (
                     <div className="flex h-40 items-center justify-center text-gray-500">
-                        Không tìm thấy nhóm video nào
+                        Không tìm thấy video nào
                     </div>
                 )}
             </main>
 
-            <CreateVideoGroupModal
-                mode={editingGroup ? 'update' : 'create'}
-                isOpen={isModalOpen}
-                videoGroup={editingGroup}
-                onClose={closeModal}
-                onCreated={handleCreateVideoGroup}
-                onUpdated={handleUpdateVideoGroup}
-            />
+            {videoGroupId ? (
+                <CreateVideoModal
+                    isOpen={isModalOpen}
+                    videoGroupId={videoGroupId}
+                    onClose={() => setIsModalOpen(false)}
+                    onCreated={handleCreateVideo}
+                />
+            ) : null}
         </div>
     );
 }

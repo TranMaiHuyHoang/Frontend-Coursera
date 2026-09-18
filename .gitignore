@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local agent skills & working notes (keep local, not tracked/pulled)
+.skill/
+document_local/

@@ -18,6 +18,7 @@ import CreateSkill from './pages/CreateSkill';
 import UpdateSkill from './pages/UpdateSkill';
 import CreateLanguage from './pages/CreateLanguage';
 import UpdateLanguage from './pages/UpdateLanguage';
+import VideoGroup from './pages/VideoGroup';
 import Video from './pages/Video';
 
 function App() {
@@ -81,7 +82,11 @@ function App() {
                             <Route path='/create-language' element={<CreateLanguage/>}/>
                             <Route path='/update-language/:languageId' element={<UpdateLanguage/>}/>
 
-                            <Route path="/video" element={<Video />} />
+                            <Route path="/video-group" element={<VideoGroup />} />
+                            <Route
+                                path="/video-group/:videoGroupId"
+                                element={<Video />}
+                            />
                         </Route>
                     </Route>
                 </Routes>

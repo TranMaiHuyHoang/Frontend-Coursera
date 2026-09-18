@@ -8,7 +8,7 @@ export default function DashboardLayout() {
         { name: 'Lĩnh vực', path: '/field-study', icon: BookOpen },
         { name: 'Kỹ năng', path: '/skill', icon: Heart },
         { name: 'Ngôn ngữ', path: '/language', icon: GraduationCap },
-        { name: 'Quản lý video', path: '/video', icon: Video },
+        { name: 'Quản lý video', path: '/video-group', icon: Video },
         { name: 'Settings', path: '/settings', icon: Settings },
     ];
 
