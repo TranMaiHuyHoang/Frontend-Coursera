@@ -18,6 +18,10 @@ export default function CreateSkillModal({
     const [description, setDescription] = useState('');
     const [isActive, setIsActive] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState<{
+        name?: string;
+        description?: string;
+    }>({});
 
     if (!isOpen) return null;
 
@@ -25,6 +29,7 @@ export default function CreateSkillModal({
         setName('');
         setDescription('');
         setIsActive(true);
+        setErrors({});
     };
 
     const handleClose = () => {
@@ -34,8 +39,25 @@ export default function CreateSkillModal({
         onClose();
     };
 
+    const validate = (): boolean => {
+        const newErrors: { name?: string; description?: string } = {};
+
+        if (!name.trim()) {
+            newErrors.name = 'Vui lòng nhập tên kỹ năng';
+        }
+
+        if (!description.trim()) {
+            newErrors.description = 'Vui lòng nhập mô tả kỹ năng';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!validate()) return;
 
         try {
             setIsLoading(true);
@@ -79,7 +101,7 @@ export default function CreateSkillModal({
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6">
+                <form onSubmit={handleSubmit} noValidate className="p-6">
                     <div className="mb-5">
                         <label className="mb-1 block text-sm font-medium text-gray-700">
                             Tên Kỹ Năng
@@ -88,12 +110,28 @@ export default function CreateSkillModal({
                         <input
                             type="text"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="h-11 w-full rounded-xl border border-gray-300 px-4 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50"
+                            onChange={(e) => {
+                                setName(e.target.value);
+                                if (errors.name) {
+                                    setErrors((prev) => ({
+                                        ...prev,
+                                        name: undefined,
+                                    }));
+                                }
+                            }}
+                            className={`h-11 w-full rounded-xl border px-4 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50 ${
+                                errors.name
+                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
+                                    : 'border-gray-300'
+                            }`}
                             placeholder="Nhập tên Kỹ Năng..."
-                            required
                             disabled={isLoading}
                         />
+                        {errors.name && (
+                            <p className="mt-1 text-sm text-red-600">
+                                {errors.name}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-5">
@@ -103,12 +141,29 @@ export default function CreateSkillModal({
 
                         <textarea
                             value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="w-full rounded-xl border border-gray-300 p-4 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50"
+                            onChange={(e) => {
+                                setDescription(e.target.value);
+                                if (errors.description) {
+                                    setErrors((prev) => ({
+                                        ...prev,
+                                        description: undefined,
+                                    }));
+                                }
+                            }}
+                            className={`w-full rounded-xl border p-4 text-sm outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-100 disabled:opacity-50 ${
+                                errors.description
+                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-100'
+                                    : 'border-gray-300'
+                            }`}
                             placeholder="Mô tả chi tiết Kỹ Năng..."
                             rows={4}
                             disabled={isLoading}
                         />
+                        {errors.description && (
+                            <p className="mt-1 text-sm text-red-600">
+                                {errors.description}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-8 flex items-center gap-2">
