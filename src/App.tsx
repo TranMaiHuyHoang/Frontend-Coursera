@@ -20,6 +20,7 @@ import CreateLanguage from './pages/CreateLanguage';
 import UpdateLanguage from './pages/UpdateLanguage';
 import VideoGroup from './pages/VideoGroup';
 import Video from './pages/Video';
+import Settings from './pages/Settings';
 
 function App() {
     return (
@@ -87,6 +88,8 @@ function App() {
                                 path="/video-group/:videoGroupId"
                                 element={<Video />}
                             />
+
+                            <Route path="/settings" element={<Settings />} />
                         </Route>
                     </Route>
                 </Routes>

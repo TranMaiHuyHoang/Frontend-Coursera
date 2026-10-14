@@ -1,4 +1,6 @@
 export const FILTER_OPTIONS = [
-    { label: 'ngày tạo mới nhất', value: 'newest' },
-    { label: 'ngay tạo cũ nhất', value: 'oldest' },
+    { label: 'Mới nhất', value: 'newest' },
+    { label: 'Cũ nhất', value: 'oldest' },
+    { label: 'Hoạt động', value: 'active' },
+    { label: 'Không hoạt động', value: 'not_active' },
 ];
