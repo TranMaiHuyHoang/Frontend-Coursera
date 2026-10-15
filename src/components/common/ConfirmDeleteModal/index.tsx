@@ -2,6 +2,7 @@ interface ConfirmDeleteModalProps {
     isOpen: boolean;
     title: string;
     description: string;
+    loading?: boolean;
     onCancel: () => void;
     onConfirm: () => void;
 }
@@ -10,6 +11,7 @@ export default function ConfirmDeleteModal({
     isOpen,
     title,
     description,
+    loading = false,
     onCancel,
     onConfirm,
 }: ConfirmDeleteModalProps) {
@@ -26,7 +28,8 @@ export default function ConfirmDeleteModal({
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="rounded-lg border px-4 py-2"
+                        disabled={loading}
+                        className="rounded-lg border px-4 py-2 disabled:opacity-50"
                     >
                         Huỷ
                     </button>
@@ -34,9 +37,10 @@ export default function ConfirmDeleteModal({
                     <button
                         type="button"
                         onClick={onConfirm}
-                        className="rounded-lg bg-red-500 px-4 py-2 text-white"
+                        disabled={loading}
+                        className="rounded-lg bg-red-500 px-4 py-2 text-white disabled:opacity-50"
                     >
-                        Xoá
+                        {loading ? 'Đang xoá...' : 'Xoá'}
                     </button>
                 </div>
             </div>

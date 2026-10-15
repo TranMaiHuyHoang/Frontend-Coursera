@@ -18,6 +18,11 @@ class VideoGroupService {
         const response = await this.api.post('/video-groups/update', body);
         return response.data;
     };
+
+    deleteVideoGroup = async (body: object): Promise<ApiResponse> => {
+        const response = await this.api.post('/video-groups/delete', body);
+        return response.data;
+    };
 }
 
 export const videoGroupService = new VideoGroupService();

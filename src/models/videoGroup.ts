@@ -1,10 +1,13 @@
+import type { IFieldStudy } from './fieldStudy';
+import type { ILanguage } from './language';
+
 export interface IVideo {
     _id: string;
     videoGroupId: string;
     video_name: string;
     description: string;
-    list_field_study: string[];
-    list_language: string[];
+    list_field_study: IFieldStudy[];
+    list_language: ILanguage[];
     video_url: string;
     avtart_image: string;
     duration: number;
